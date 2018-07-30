@@ -4,21 +4,29 @@ contract KeyContract {
 
   address owner;      //Owner's address of this key
   address[] rights;   //Addresses that granted the right
-  bool locked = true; //"true" is open, "false" is close
+  bool locked = false; //"true" is open, "false" is close
 
   constructor() public{
     owner = msg.sender;
   }
 
   function open() public returns(bool){
-    require(msg.sender == owner || checkRight(msg.sender));
-    locked == true;
+    /* require(msg.sender == owner || checkRight(msg.sender)); */
+    if(msg.sender == owner || checkRight(msg.sender)){
+      locked = true;
+    }else{
+      revert("you cant open");
+    }
     return locked;
   }
 
   function close() public returns(bool){
-    require(msg.sender == owner || checkRight(msg.sender));
-    locked == false;
+    /* require(msg.sender == owner || checkRight(msg.sender)); */
+    if(msg.sender == owner || checkRight(msg.sender)){
+      locked = false;
+    }else{
+      revert("you cant close");
+    }
     return locked;
   }
 
