@@ -35,7 +35,7 @@ contract KeyContract {
     rights.push(_granted);
   }
 
-  function checkRight(address _target) private returns(bool){
+  function checkRight(address _target) private view returns(bool){
     for(uint i = 0; i < rights.length; i++){
       if(rights[i] == _target){
         return true;

@@ -27,6 +27,8 @@ contract('KeyContractTest', function(accounts) {
       strage = instance;
     }).then(function(){
       return strage.open.call({from: accounts[2]});
+    }).catch(function(error){
+      console.log("Access from unauthorized person");
     });
   });
 
