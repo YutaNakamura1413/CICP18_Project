@@ -2,6 +2,8 @@ pragma solidity ^0.4.24;
 
 contract KeyContract {
 
+  event OpenClose(bool lock);
+
   address owner;      //Owner's address of this key
   address[] rights;   //Addresses that granted the right
   bool locked = true; //"true" is closed, "false" is open
@@ -17,6 +19,7 @@ contract KeyContract {
     }else{
       revert("you cant open");
     }
+    emit OpenClose(locked);
     return locked;
   }
 
@@ -27,6 +30,7 @@ contract KeyContract {
     }else{
       revert("you cant close");
     }
+    emit OpenClose(locked);
     return locked;
   }
 
