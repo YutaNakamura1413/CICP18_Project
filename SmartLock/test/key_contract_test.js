@@ -13,11 +13,11 @@ contract('KeyContractTest', function(accounts) {
       strage = instance;
       return strage.open.call({from: accounts[0]});
     }).then(function(expected){
-      assert.equal(expected, true);
+      assert.equal(expected, false);
     }).then(function(){
       return strage.close.call({from: accounts[0]});
     }).then(function(expected){
-      assert.equal(expected, false);
+      assert.equal(expected, true);
     });
   });
 
@@ -40,11 +40,11 @@ contract('KeyContractTest', function(accounts) {
     }).then(function(){
       return strage.open.call({from: accounts[2]});
     }).then(function(expected){
-      assert.equal(expected, true);
+      assert.equal(expected, false);
     }).then(function(){
       return strage.close.call({from: accounts[2]});
     }).then(function(expected){
-      assert.equal(expected, false);
+      assert.equal(expected, true);
     });
   });
 });
