@@ -8,15 +8,13 @@ contract KeyContract {
   address[] rights;   //Addresses that granted the right
   bool locked = true; //"true" is closed, "false" is open
 
-  address a = 0xF59c4bf63FEB4ce4df4cD0E5facAE2eA95448e85;
-
   constructor() public{
     owner = msg.sender;
   }
 
   function open() public returns(bool){
     /* require(msg.sender == owner || checkRight(msg.sender)); */
-    if(msg.sender == owner || checkRight(msg.sender) || msg.sender == a){
+    if(msg.sender == owner || checkRight(msg.sender)){
       locked = false;
     }else{
       revert("you cant open");
