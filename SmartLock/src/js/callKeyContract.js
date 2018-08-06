@@ -9,6 +9,12 @@ if (!web3.currentProvider) {
     web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
 }
 
+// ボタンを押した時の処理
+function OnButtonClick() {
+
+    target = document.getElementById("output");
+    target.innerHTML = "鍵が空きました";
+}
 //simplestorageのABI
 var contract = require('../../build/contracts/KeyContract.json');
 var ABI = contract.abi;
