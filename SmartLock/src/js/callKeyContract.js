@@ -1,3 +1,13 @@
+var OnButtonClick = function () {
+  fetch('https://api.candyhouse.co/public/sesame/fc5bad76-b2f0-4876-b4ea-17e3bc93fd05').then(function (response) {
+    return response.text();
+}).then(function (text) {
+    console.log('RESULT: ' + text);
+});
+  target = document.getElementById("output");
+  target.innerHTML = "鍵が空きました";
+}
+
 // ボタンを押した時の処理
 function OnButtonClick() {
   // 必要なパッケージをインポート
