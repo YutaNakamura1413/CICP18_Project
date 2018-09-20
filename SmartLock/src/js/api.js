@@ -1,9 +1,12 @@
+require('dotenv').config();
+const env = process.env.AUTH_ENV;
+
 var request = require('request');
 
 var getStatusOptions = {
   url: 'https://api.candyhouse.co/public/sesame/fc5bad76-b2f0-4876-b4ea-17e3bc93fd05',
   headers: {
-    'Authorization': '21l_pMReQ1OfR-Q0Ewi4Blz8oFsAQs6jMty5lL5Om2QO2QwSknOw8cqc7FvK7w2D9V5wCUNO9tbM',
+    'Authorization': env,
   }
 };
 
@@ -11,7 +14,7 @@ var getStatusOptions = {
 var postLockOptions = {
   url: 'https://api.candyhouse.co/public/sesame/fc5bad76-b2f0-4876-b4ea-17e3bc93fd05',
   headers: {
-    'Authorization': '21l_pMReQ1OfR-Q0Ewi4Blz8oFsAQs6jMty5lL5Om2QO2QwSknOw8cqc7FvK7w2D9V5wCUNO9tbM',
+    'Authorization': env,
     'content-type': 'application/json'
   },
   body: JSON.stringify({
@@ -23,7 +26,7 @@ var postLockOptions = {
 var postUnlockOptions = {
   url: 'https://api.candyhouse.co/public/sesame/fc5bad76-b2f0-4876-b4ea-17e3bc93fd05',
   headers: {
-    'Authorization': '21l_pMReQ1OfR-Q0Ewi4Blz8oFsAQs6jMty5lL5Om2QO2QwSknOw8cqc7FvK7w2D9V5wCUNO9tbM',
+    'Authorization': env,
     'content-type': 'application/json'
   },
   body: JSON.stringify({
@@ -39,5 +42,7 @@ function callback(error, response, body) {
   } else {console.log(info.message)}
 }
 
-if ()
-request.post(options, callback);
+var sesameStatus = request.get(getStatusOptions, callback);
+
+// if (sesamiStatus.locked && )
+request.get(getStatusOptions, callback);
