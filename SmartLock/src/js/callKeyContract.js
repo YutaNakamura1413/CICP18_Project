@@ -57,6 +57,21 @@ const callApi = (options) => {
   });
 }
 
+const callApiResult = (options) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      request(options, (error, response, body) => {
+        let json = JSON.parse(body);
+        if (!error && response.statusCode == 200) {
+          resolve(json);
+        } else {
+          reject(json.message);
+        }
+      });
+    }, 10000);
+  });
+}
+
 // web3の初期化
 web3 = new Web3();
 // プライベートネットワークと接続
@@ -77,7 +92,8 @@ callApi(getStatusOptions).then((res) => {
     return callApi(postUnlockOptions);
   }
 }).then((res) => {
-  return callApi({
+  console.log(res);
+  return callApiResult({
     url: `https://api.candyhouse.co/public/action-result?task_id=${res.task_id}`,
     headers: {
       'Authorization': env
@@ -85,7 +101,8 @@ callApi(getStatusOptions).then((res) => {
   });
 }).then((res) => {
   console.log(res);
-  if(res.successful == 'false') {
+  if(res.successful == true) {
     console.log(res.successful);
+    smartKey.open({from:web3.eth.accounts[0]});
   }
 });
