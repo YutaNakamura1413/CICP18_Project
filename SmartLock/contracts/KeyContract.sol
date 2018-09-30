@@ -12,6 +12,10 @@ contract KeyContract {
     owner = msg.sender;
   }
 
+  function getStatus() public returns(bool){
+      return locked;
+  }
+
   function open() public returns(bool){
     /* require(msg.sender == owner || checkRight(msg.sender)); */
     if(msg.sender == owner || checkRight(msg.sender)){

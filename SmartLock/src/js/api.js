@@ -1,48 +1,65 @@
 require('dotenv').config();
-const env = process.env.AUTH_ENV;
-
-var request = require('request');
-
-var getStatusOptions = {
-  url: 'https://api.candyhouse.co/public/sesame/fc5bad76-b2f0-4876-b4ea-17e3bc93fd05',
+const env = process.env.AUTH_KEY;
+const request = require('request');
+const url = 'https://api.candyhouse.co/public/sesame/fc5bad76-b2f0-4876-b4ea-17e3bc93fd05';
+// get the key status
+const getStatusOptions = {
+  url: url,
   headers: {
-    'Authorization': env,
+    'Authorization': env
   }
 };
 
 //鍵を閉める時のリクエスト情報
-var postLockOptions = {
-  url: 'https://api.candyhouse.co/public/sesame/fc5bad76-b2f0-4876-b4ea-17e3bc93fd05',
+const postLockOptions = {
+  url: url,
+  method: 'POST',
   headers: {
     'Authorization': env,
     'content-type': 'application/json'
   },
   body: JSON.stringify({
-    "command":"lock"
+    "command": "lock"
   })
 };
 
 //鍵を開ける時のリクエスト情報
-var postUnlockOptions = {
-  url: 'https://api.candyhouse.co/public/sesame/fc5bad76-b2f0-4876-b4ea-17e3bc93fd05',
+const postUnlockOptions = {
+  url: url,
+  method: 'POST',
   headers: {
     'Authorization': env,
     'content-type': 'application/json'
   },
   body: JSON.stringify({
-    "command":"unlock"
+    "command": "unlock"
   })
 };
 
-function callback(error, response, body) {
-  var info = JSON.parse(body);
-  if (!error && response.statusCode == 200) {
-    console.log("success");
-    console.log(info);
-  } else {console.log(info.message)}
+const callApi = (options) => {
+  return new Promise((resolve, reject) => {
+    request(options, (error, response, body) => {
+      let json = JSON.parse(body);
+      if (!error && response.statusCode == 200) {
+        resolve(json);
+      } else {
+        reject(json.message);
+      }
+    });
+  });
 }
 
-var sesameStatus = request.get(getStatusOptions, callback);
-
-// if (sesamiStatus.locked && )
-request.get(getStatusOptions, callback);
+callApi(getStatusOptions).then((status) => {
+  if(status.locked == true) {
+    return callApi(postUnlockOptions);
+  }
+}).then((res) => {
+  return callApi({
+    url: `https://api.candyhouse.co/public/action-result?task_id=${res.task_id}`,
+    headers: {
+      'Authorization': env
+    }
+  });
+}).then((res) => {
+  console.log(res.status);
+});
