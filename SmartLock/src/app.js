@@ -1,7 +1,9 @@
-// 必要なパッケージをインポート
+//Expressのモジュールを取り込んで生成
+const express = require('express')
+const app = express()
+const portNo = 3000
 const fs = require("fs");
 const Web3 = require('web3');
-
 require('dotenv').config();
 const env = process.env.AUTH_KEY;
 const request = require('request');
@@ -77,29 +79,52 @@ if (!web3.currentProvider) {
 }
 
 //simplestorageのABI
-var contract = require('../../build/contracts/KeyContract.json');
+var contract = require('../build/contracts/KeyContract.json');
 var ABI = contract.abi;
 var address = contract.networks[13].address;
 var smartKey = web3.eth.contract(ABI).at(address);
 var status = smartKey.getStatus.call({from:web3.eth.accounts[0]});
+var event = smartKey.OpenClose();
+// console.log(event);
 
-callApi(getStatusOptions).then((res) => {
-  if(res.locked == true && status == true) {
-    console.log('status OK');
-    return callApi(postUnlockOptions);
-  }
-}).then((res) => {
-  console.log(res);
-  return callApiResult({
-    url: `https://api.candyhouse.co/public/action-result?task_id=${res.task_id}`,
-    headers: {
-      'Authorization': env
+//イベント監視
+event.watch(function (error, result) {
+ console.log('watching "OpenClose" event!');
+  if (!error)
+    console.log(result);
+});
+
+app.set('view engine', 'ejs');
+
+app.get('/', (req, res, next) => {
+  res.render("index")
+})
+
+app.post('/open', (req, res, next) => {
+  //   target = document.getElementById("output");
+  //   target.innerHTML = "鍵が空きました";})
+  callApi(getStatusOptions).then((res) => {
+    if(res.locked == true && status == true) {
+      console.log('status OK');
+      return callApi(postUnlockOptions);
+    }
+  }).then((res) => {
+    console.log(res);
+    return callApiResult({
+      url: `https://api.candyhouse.co/public/action-result?task_id=${res.task_id}`,
+      headers: {
+        'Authorization': env
+      }
+    });
+  }).then((res) => {
+    console.log(res);
+    if(res.successful == true) {
+      console.log(res.successful);
+      smartKey.open({from:web3.eth.accounts[0]});
     }
   });
-}).then((res) => {
-  console.log(res);
-  if(res.successful == true) {
-    console.log(res.successful);
-    smartKey.open({from:web3.eth.accounts[0]});
-  }
-});
+})
+
+app.listen(portNo, () => {
+  console.log('起動しました', `http://localhost:${portNo}`)
+})
