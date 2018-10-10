@@ -97,7 +97,7 @@ event.watch(function (error, result) {
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res, next) => {
-  res.render("index", {})
+  res.render("index")
 })
 
 app.post('/open', (req, res, next) => {
