@@ -10,8 +10,9 @@ const bodyParser = require('body-parser')
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-app.use(bodyParser());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
 // get the key status
 // const getStatusOptions = {
 //   url: url,

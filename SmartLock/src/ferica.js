@@ -20,7 +20,7 @@ app.post('/open', (req, res, next) => {
 app.post('/close', (req, res, next) => {
   led.write(0.11);
 })
- 
+
 raspi.init(() => {
   led = new pwm.PWM('GPIO18');
   app.listen(portNo, () => {

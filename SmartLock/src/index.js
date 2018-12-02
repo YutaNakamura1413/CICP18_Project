@@ -29,7 +29,7 @@ app.post('/close', (req, res, next) => {
   led.write(0.11);
   res.send("closed")
 })
- 
+
 raspi.init(() => {
   led = new pwm.PWM('GPIO18');
   console.log(led)
