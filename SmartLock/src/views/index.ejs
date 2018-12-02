@@ -1,16 +1,50 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Smart Key</title>
+<meta charset="UTF-8">
+<title>Smart Key</title>
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+<script>
+window.addEventListener('load', function () {
+    if (typeof web3 !== 'undefined') {
+        console.log('Web3：' + web3.currentProvider.constructor.name);
+        startApp();
+    }else{
+        console.log('MetaMaskをインストールして下さい');
+    }
+})
+
+function startApp(){
+    web3 = new Web3(web3.currentProvider);
+    web3.eth.getAccounts(function(error, accounts) {
+        if (error) return;
+        let user_account = accounts[0];
+        if(typeof user_account !== 'undefined'){
+          window.sessionStorage.setItem(['user_account'],[user_account]);
+        }else{
+            console.log("ログインして下さい");
+        }
+    });
+}
+function sendAccount() {
+  let user_account = window.sessionStorage.getItem(['user_account']);
+  var ele = document.createElement('input');
+  // データを設定
+  ele.setAttribute('type', 'hidden');
+  ele.setAttribute('name', 'user_account');
+  ele.setAttribute('value', user_account);
+  // 要素を追加
+  document.keyForm.appendChild(ele);
+}
+</script>
 </head>
 <body>
-  <form action="/open" method="POST">
-     <button>Open</button>
-   </form>
-  <form action="/close" method="POST">
-     <button>Close</button>
-   </form>
+  <form action="/open" method="POST" id="keyForm" name="keyForm">
+    <input type="submit" name="btn" value="Open" onclick="sendAccount();" />
+  </form>
+  <form action="/close" method="POST" id="keyForm" name="keyForm">
+    <input type="submit" name="btn" value="Close" onclick="sendAccount();" />
+  </form>
   <div id="output"><p></p></div>
 </body>
 </html>
