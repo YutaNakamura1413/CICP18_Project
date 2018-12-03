@@ -13,26 +13,6 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-// get the key status
-// const getStatusOptions = {
-//   url: url,
-//   headers: {
-//     'Authorization': env
-//   }
-// };
-
-//鍵を閉める時のリクエスト情報
-const postLockOptions = {
-  url: "https://51b0fb00.ngrok.io/close",
-  method: 'POST',
-};
-
-//鍵を開ける時のリクエスト情報
-const postUnlockOptions = {
-  url: "https://51b0fb00.ngrok.io/open",
-  method: 'POST',
-};
-
 // web3の初期化
 web3 = new Web3();
 // プライベートネットワークと接続
@@ -47,6 +27,7 @@ var address = contract.networks[13].address;
 var smartKey = web3.eth.contract(ABI).at(address);
 var status
 var event = smartKey.OpenClose();
+
 //イベント監視
 event.watch(function (error, result) {
  console.log('watching "OpenClose" event!');
@@ -59,21 +40,18 @@ app.get('/', (req, res, next) => {
 })
 
 app.post('/open', (req, res, next) => {
-  console.log(req.body["user_account"])
-    //smartKey.open({from:web3.eth.accounts[0]});
+  let address = req.body["user_account"]
+    if (typeof address !== 'undefined') {
+      smartKey.open({from:address});
+    }
 })
 
 app.post('/close', (req, res, next) => {
-  if (status == false) {
-    request(postLockOptions, (error, response, body) => {
-      // let json = JSON.parse(body);
-      // if (json == "closed") {
-    smartKey.close({from:web3.eth.accounts[0]});
-      // }
-    });
-  }
+  let address = req.body["user_account"]
+    if (typeof address !== 'undefined') {
+      smartKey.close({from:address});
+    }
 })
-
 app.listen(portNo, () => {
   console.log('起動しました', `http://localhost:${portNo}`)
 })
