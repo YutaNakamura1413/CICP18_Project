@@ -12,6 +12,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static('public'));
 
 // web3の初期化
 web3 = new Web3();

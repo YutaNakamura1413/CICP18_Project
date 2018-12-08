@@ -1,108 +1,47 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Smart Key</title>
-<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
-<script>
-  window.addEventListener('load', function () {
-      if (typeof web3 !== 'undefined') {
-          console.log('Web3：' + web3.currentProvider.constructor.name);
-          startApp();
-      }else{
-          console.log('MetaMaskをインストールして下さい');
-      }
-  })
+  <head>
+    <meta charset="UTF-8">
+    <title>Smart Key</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script type="text/javascript" src="js/sendTransaction.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="navbar navbar-dark bg-dark box-shadow">
+        <div class="container d-flex justify-content-between">
+          <a href="#" class="navbar-brand d-flex align-items-center">
+            <strong>SmartLock</strong>
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main role="main">
 
-  function startApp(){
-      web3 = new Web3(web3.currentProvider);
-      web3.eth.getAccounts(function(error, accounts) {
-          if (error) return;
-          let user_address = accounts[0];
-          if(typeof user_address !== 'undefined'){
-            window.sessionStorage.setItem(['user_address'],[user_address]);
-          }else{
-              console.log("ログインして下さい");
-          }
-      });
-  }
-  function sendTransaction(button) {
-    button.disabled = true;
-    setTimeout(function() {
-      button.disabled = false;
-    }, 5000);
-    var ABI = [ { inputs: [],
-                  payable: false,
-                  stateMutability: 'nonpayable',
-                  type: 'constructor' },
-                { anonymous: false,
-                  inputs: [ [Object], [Object] ],
-                  name: 'OpenClose',
-                  type: 'event' },
-                { constant: false,
-                  inputs: [],
-                  name: 'getStatus',
-                  outputs: [ [Object] ],
-                  payable: false,
-                  stateMutability: 'nonpayable',
-                  type: 'function' },
-                { constant: false,
-                  inputs: [],
-                  name: 'open',
-                  outputs: [ [Object] ],
-                  payable: false,
-                  stateMutability: 'nonpayable',
-                  type: 'function' },
-                { constant: false,
-                  inputs: [],
-                  name: 'close',
-                  outputs: [ [Object] ],
-                  payable: false,
-                  stateMutability: 'nonpayable',
-                  type: 'function' },
-                { constant: false,
-                  inputs: [ [Object] ],
-                  name: 'grantRight',
-                  outputs: [],
-                  payable: false,
-                  stateMutability: 'nonpayable',
-                  type: 'function' } ];
-    var address = "0x06715a57e047d3ecebcd490c74799d95353af279";
-    var smartKey = web3.eth.contract(ABI).at(address);
-    var user_address = window.sessionStorage.getItem(['user_address']);
-    var event = smartKey.OpenClose();
-
-    //イベント監視
-    event.watch(function (error, result) {
-     console.log('watching "OpenClose" event!');
-      if (!error)
-        console.log(result);
-    });
-    // 要素を追加
-    if(button.value === 'Open') {
-      smartKey.open({from:user_address}, (error, result) => {
-        console.log(result);
-        var status = document.getElementById('status')
-        status.innerHTML = '<p>Status:false</p>'
-      });
-    } else {
-      smartKey.close({from:user_address}, (error, result) => {
-        console.log(result);
-        var status = document.getElementById('status')
-        status.innerHTML = '<p>Status:true</p>'
-      });
-    }
-  }
-</script>
-</head>
-<body>
-  <div id="status"><p>Status:<%= title %></p></div>
-  <form action="/open" method="POST" id="openForm" name="openForm">
-    <input type="submit" name="btn" value="Open" onclick="sendTransaction(this);" />
-  </form>
-  <form action="/close" method="POST" id="closeForm" name="closeForm">
-    <input type="submit" name="btn" value="Close" onclick="sendTransaction(this);" />
-  </form>
-  <div id="output"><p></p></div>
-</body>
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Welcome to distributed smart lock</h1>
+          <p class="lead text-muted">You can lock and unlock keys, such as your home, office, and so on from a remote place</p>
+        </div>
+      </section>
+      <div class="col-md-3 mx-auto">
+        <div class="card mb-3 box-shadow">
+          <img class="card-img-top" id="image" src="" alt="Card image cap"　height="400">
+          <div class="card-body">
+            <div class="card-text text-center"><h2 >Status</h2><h2 id="status"><%= title %></h2></div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="btn-group">
+                <button type="button" class="btn btn-primary my-2" name="btn" value="Open" onclick="sendTransaction(this);">Open</button>
+                <button type="button" class="btn btn-secondary my-2" name="btn" value="Close" onclick="sendTransaction(this);">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </main>
+  </body>
 </html>
