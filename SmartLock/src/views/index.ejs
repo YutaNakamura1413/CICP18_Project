@@ -18,36 +18,90 @@
       web3 = new Web3(web3.currentProvider);
       web3.eth.getAccounts(function(error, accounts) {
           if (error) return;
-          let user_account = accounts[0];
-          if(typeof user_account !== 'undefined'){
-            window.sessionStorage.setItem(['user_account'],[user_account]);
+          let user_address = accounts[0];
+          if(typeof user_address !== 'undefined'){
+            window.sessionStorage.setItem(['user_address'],[user_address]);
           }else{
               console.log("ログインして下さい");
           }
       });
   }
-  function sendAccount(button) {
-    let user_account = window.sessionStorage.getItem(['user_account']);
-    var ele = document.createElement('input');
-    // データを設定
-    ele.setAttribute('type', 'hidden');
-    ele.setAttribute('name', 'user_account');
-    ele.setAttribute('value', user_account);
+  function sendTransaction(button) {
+    button.disabled = true;
+    setTimeout(function() {
+      button.disabled = false;
+    }, 5000);
+    var ABI = [ { inputs: [],
+                  payable: false,
+                  stateMutability: 'nonpayable',
+                  type: 'constructor' },
+                { anonymous: false,
+                  inputs: [ [Object], [Object] ],
+                  name: 'OpenClose',
+                  type: 'event' },
+                { constant: false,
+                  inputs: [],
+                  name: 'getStatus',
+                  outputs: [ [Object] ],
+                  payable: false,
+                  stateMutability: 'nonpayable',
+                  type: 'function' },
+                { constant: false,
+                  inputs: [],
+                  name: 'open',
+                  outputs: [ [Object] ],
+                  payable: false,
+                  stateMutability: 'nonpayable',
+                  type: 'function' },
+                { constant: false,
+                  inputs: [],
+                  name: 'close',
+                  outputs: [ [Object] ],
+                  payable: false,
+                  stateMutability: 'nonpayable',
+                  type: 'function' },
+                { constant: false,
+                  inputs: [ [Object] ],
+                  name: 'grantRight',
+                  outputs: [],
+                  payable: false,
+                  stateMutability: 'nonpayable',
+                  type: 'function' } ];
+    var address = "0x06715a57e047d3ecebcd490c74799d95353af279";
+    var smartKey = web3.eth.contract(ABI).at(address);
+    var user_address = window.sessionStorage.getItem(['user_address']);
+    var event = smartKey.OpenClose();
+
+    //イベント監視
+    event.watch(function (error, result) {
+     console.log('watching "OpenClose" event!');
+      if (!error)
+        console.log(result);
+    });
     // 要素を追加
     if(button.value === 'Open') {
-      document.openForm.appendChild(ele);
+      smartKey.open({from:user_address}, (error, result) => {
+        console.log(result);
+        var status = document.getElementById('status')
+        status.innerHTML = '<p>Status:false</p>'
+      });
     } else {
-      document.closeForm.appendChild(ele);
+      smartKey.close({from:user_address}, (error, result) => {
+        console.log(result);
+        var status = document.getElementById('status')
+        status.innerHTML = '<p>Status:true</p>'
+      });
     }
   }
 </script>
 </head>
 <body>
+  <div id="status"><p>Status:<%= title %></p></div>
   <form action="/open" method="POST" id="openForm" name="openForm">
-    <input type="submit" name="btn" value="Open" onclick="sendAccount(this);" />
+    <input type="submit" name="btn" value="Open" onclick="sendTransaction(this);" />
   </form>
   <form action="/close" method="POST" id="closeForm" name="closeForm">
-    <input type="submit" name="btn" value="Close" onclick="sendAccount(this);" />
+    <input type="submit" name="btn" value="Close" onclick="sendTransaction(this);" />
   </form>
   <div id="output"><p></p></div>
 </body>
