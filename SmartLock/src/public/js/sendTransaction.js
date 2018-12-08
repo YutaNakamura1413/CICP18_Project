@@ -90,17 +90,29 @@ function sendTransaction(button) {
   // 要素を追加
   if(button.value === 'Open') {
     smartKey.open({from:user_address}, (error, result) => {
-      console.log(result);
-      var status = document.getElementById('status')
-      status.innerHTML = 'false'
-      switchImage();
+      var output = document.getElementById('output');
+      if (!error) {
+        console.log(result);
+        var status = document.getElementById('status');
+        status.innerHTML = 'false';
+        switchImage();
+        output.innerHTML = 'Success!';
+      } else {
+        output.innerHTML = error;
+      }
     });
   } else {
     smartKey.close({from:user_address}, (error, result) => {
-      console.log(result);
-      var status = document.getElementById('status')
-      status.innerHTML = 'true'
-      switchImage();
+      var output = document.getElementById('output');
+      if (!error) {
+        console.log(result);
+        var status = document.getElementById('status')
+        status.innerHTML = 'true'
+        switchImage();
+        output.innerHTML = 'Success';
+      } else {
+        output.innerHTML = error;
+      }
     });
   }
 }
