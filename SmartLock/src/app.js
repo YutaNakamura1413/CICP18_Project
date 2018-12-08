@@ -25,7 +25,6 @@ var contract = require('../build/contracts/KeyContract.json');
 var ABI = contract.abi;
 var address = contract.networks[13].address;
 var smartKey = web3.eth.contract(ABI).at(address);
-var status
 var event = smartKey.OpenClose();
 
 //イベント監視
@@ -36,22 +35,17 @@ event.watch(function (error, result) {
 });
 
 app.get('/', (req, res, next) => {
-  res.render("index")
+  var status = smartKey.getStatus.call({from:web3.eth.accounts[0]});
+  res.render("index", {
+      title: status})
 })
 
 app.post('/open', (req, res, next) => {
-  let address = req.body["user_account"]
-    if (typeof address !== 'undefined') {
-      smartKey.open({from:address});
-    }
 })
 
 app.post('/close', (req, res, next) => {
-  let address = req.body["user_account"]
-    if (typeof address !== 'undefined') {
-      smartKey.close({from:address});
-    }
 })
+
 app.listen(portNo, () => {
   console.log('起動しました', `http://localhost:${portNo}`)
 })
